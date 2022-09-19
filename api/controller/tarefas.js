@@ -116,7 +116,7 @@ module.exports = app => {
 
       fs.writeFile('./api/data/tarefas.json', JSON.stringify(dataRead), 'utf-8', () => { console.log('OK') });
 
-      res.status(201).json(changedTarefa);
+      res.status(200).json(changedTarefa);
     });
   };
 
