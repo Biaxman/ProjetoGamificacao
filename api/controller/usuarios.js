@@ -1,122 +1,48 @@
 module.exports = app => {
-  const fs = require('fs');
-  const sortJsonArray = require('sort-json-array');
+  const User = require('../models/usuarios');
 
   const controller = {};
 
-  controller.listUsuarios = (req, res) => {
-    var dataRead;
-    fs.readFile('./api/data/usuarios.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      dataRead = JSON.parse(data);
-      res.status(200).json(dataRead.usuarios);
+  controller.createUsuario = (req, res) => {
+    if (!req.body) {
+      res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
+      return;
+    }
+
+    const user = new User({
+      nome: req.body.nome,
+      sobrenome: req.body.sobrenome,
+      admin: req.body.admin,
+      dataInclusao: Date.now(),
     });
+
+    user
+      .save(user)
+      .then(data => {
+        res.send(data);
+      })
+      .catch(err=>{
+        res.status(500).send({
+          message:
+          err.message || "Não foi possivel criar o usuário."
+        });
+      });
+  };
+
+  controller.listUsuarios = (req, res) => {
+    schema()
   }
 
   controller.listUsuarioId = (req, res) => {
-    var dataRead;
 
-    const {
-      usuarioId,
-    } = req.params;
-
-    fs.readFile('./api/data/usuarios.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      dataRead = JSON.parse(data);
-      var usuario = dataRead.usuarios.find(usuario => usuario.id == usuarioId);
-      res.status(200).json(usuario);
-    });
   }
 
   controller.removeUsuarioId = (req, res) => {
-    var dataRead;
 
-    const {
-      usuarioId,
-    } = req.params;
-
-    fs.readFile('./api/data/usuarios.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      dataRead = JSON.parse(data);
-      var index = dataRead.usuarios.findIndex(usuario => usuario.id === usuarioId);
-      dataRead.usuarios.splice(index, 1);
-      fs.writeFile('./api/data/usuarios.json', JSON.stringify(dataRead), 'utf-8', () => { console.log('OK') });
-
-      res.status(200).json("Removido com Sucesso.");
-    });
-  };
-
-  controller.createUsuario = (req, res) => {
-    var dataRead;
-
-    fs.readFile('./api/data/usuarios.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      dataRead = JSON.parse(data);
-      const index = dataRead.usuarios.length;
-      var lastUsuario = dataRead.usuarios[index - 1];
-
-      var newUsuario = ({
-        id: parseInt(lastUsuario.id) + 1,
-        nome: req.body.nome,
-        tipo: req.body.tipo,
-        ativo: true,
-      });
-
-      dataRead.usuarios.push(newUsuario);
-
-      fs.writeFile('./api/data/usuarios.json', JSON.stringify(dataRead), 'utf-8', () => { console.log('OK') });
-
-      res.status(201).json(newUsuario);
-    });
   };
 
   controller.updateUsuario = (req, res) => {
-    var dataRead;
 
-    fs.readFile('./api/data/usuarios.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      dataRead = JSON.parse(data);
-      var index = dataRead.usuarios.findIndex(usuario => usuario.id == req.body.id);
-      var changedUsuario = dataRead.usuarios.find(usuario => usuario.id == req.body.id);
-
-      changedUsuario = ({
-        id: req.body.id,
-        nome: req.body.nome,
-        tipo: req.body.tipo,
-        ativo: req.body.ativo,
-      });
-
-      dataRead.usuarios.splice(index, 1);
-      dataRead.usuarios.push(changedUsuario);
-
-      var usuarios = dataRead.usuarios;
-      usuarios = sortJsonArray(usuarios, 'id')
-
-      dataRead.usuarios = usuarios;
-
-      fs.writeFile('./api/data/usuarios.json', JSON.stringify(dataRead), 'utf-8', () => { console.log('OK') });
-
-      res.status(201).json(changedUsuario);
-    });
   };
 
   return controller;
