@@ -29,21 +29,52 @@ module.exports = app => {
       });
   };
 
-  controller.listUsuarios = (req, res) => {
-    schema()
-  }
+  controller.listUsuarios =(async (req, res) => {
+    try {
+      const users = await User.find();
 
-  controller.listUsuarioId = (req, res) => {
+      return res.send({ users });
+ 
+    } catch (err) {
+      return res.status(400).send({error: 'Não foi possível listar os usuários'})
+    }
+  });
 
-  }
+  controller.listUsuarioId = ('/:usuarioId', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.usuarioId)
+      return res.send({ user });
+    } catch (err) {
+      return res.status(400).send({error: 'Não foi possível listar o usuário'})
+    }
 
-  controller.removeUsuarioId = (req, res) => {
+  });
 
-  };
+  controller.removeUsuarioId = ('/:usuarioId', async (req, res) => {
+    try {
+      await User.findByIdAndRemove(req.params.usuarioId);
+      return res.send('OK'); 
+      
+    } catch (err) {
+      return res.status(400).send({error: 'Não foi possível remover o usuário'})
+    }
 
-  controller.updateUsuario = (req, res) => {
+});
 
-  };
+  controller.updateUsuario = ('/:usuarioId', async (req, res) => {
+    try {
+      const {nome, sobrenome} = req.body;
+
+      const newUser = await User.findByIdAndUpdate(req.params.usuarioId, {
+        nome,
+        sobrenome
+      }, {new: true}); 
+      
+    } catch (err) {
+      return res.status(400).send({error: 'Não foi possível alterar o usuário'})
+    }
+
+});
 
   return controller;
 }
