@@ -1,5 +1,5 @@
-module.exports = app => {
-  const User = require('../models/usuarios');
+/* module.exports = app => {
+  const Usuario = require('../models/usuarios');
 
   const controller = {};
 
@@ -9,7 +9,7 @@ module.exports = app => {
       return;
     }
 
-    const user = new User({
+    const user = new Usuario({
       nome: req.body.nome,
       sobrenome: req.body.sobrenome,
       admin: req.body.admin,
@@ -77,4 +77,4 @@ module.exports = app => {
 });
 
   return controller;
-}
+} */

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/* const mongoose = require("mongoose");
 const mongooseGuide = require('mongoose-guid')(mongoose);
 const Schema = mongoose.Schema;
 
@@ -12,5 +12,6 @@ var UserSchema = new Schema({
     dataExclusao: { type: Date }
 });
 
-module.exports = mongoose.model('User',UserSchema);
+module.exports = mongoose.model('Usuario',UserSchema);
 
+ */

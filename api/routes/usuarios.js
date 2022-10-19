@@ -1,4 +1,4 @@
-module.exports = app => {
+/* module.exports = app => {
     const controller = app.controller.usuarios;
 
     app.route('/api/v1/usuarios')
@@ -9,4 +9,4 @@ module.exports = app => {
     app.route('/api/v1/usuarios/:usuarioId')
         .get(controller.listUsuarioId)
         .delete(controller.removeUsuarioId);
-}
+} */
