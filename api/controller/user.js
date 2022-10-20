@@ -42,24 +42,29 @@ module.exports = app => {
 
   controller.login = (req, res) => {
 
-    User.findOne({ username: req.body.user }, function (err, user) {
+    User.findOne({ user: req.body.user }, function (err, user) {
       if (err) throw err;
 
-      // test a matching password
-      user.comparePassword(req.body.pwd, function (err, isMatch) {
-        if (err) throw err;
+      if (user != undefined) {
+        // test a matching password
+        user.comparePassword(req.body.pwd, function (err, isMatch) {
+          if (err) throw err;
 
-        if (isMatch) {
-          const id = user.id;
-          const token = jwt.sign({ id }, process.env.SECRET, {
-            expiresIn: 300 // expires in 5min
-          });
-          return res.status(200).json({ auth: true, token: token });
-        }
-        else{
-          return res.status(401).send({ message:'Senha Errada.'});
-        }
-      });
+          if (isMatch) {
+            const id = user.id;
+            const token = jwt.sign({ id }, process.env.SECRET, {
+              expiresIn: 300 // expires in 5min
+            });
+            return res.status(200).json({ auth: true, token: token });
+          }
+          else {
+            return res.status(401).send({ message: 'Senha Errada.' });
+          }
+        });
+      }
+      else{
+        return res.status(401).send({ message: 'Usuário nãom encontrado.' });
+      }
     });
   }
 
