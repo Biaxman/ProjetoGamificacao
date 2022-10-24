@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const jwtValidate = require('../../config/jwt');
 require("dotenv-safe").config();
 
 module.exports = app => {
@@ -8,6 +9,15 @@ module.exports = app => {
     const controller = {};
 
     controller.createGroup = async (req, res) => {
+
+        await jwtValidate.verifyJWT(req, res);
+
+        console.log(res.statusCode);
+        
+        if(res.statusCode != 200){
+            return;
+        }
+
         if (!req.body) {
             res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
             return;
