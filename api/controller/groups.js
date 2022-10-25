@@ -12,9 +12,7 @@ module.exports = app => {
 
         await jwtValidate.verifyJWT(req, res);
 
-        console.log(res.statusCode);
-        
-        if(res.statusCode != 200){
+        if (res.statusCode != 200) {
             return;
         }
 
@@ -30,18 +28,18 @@ module.exports = app => {
         var adminUser;
 
         var query = User.findOne({ user: req.body.user });
-        var result = await query.exec();        
+        var result = await query.exec();
         adminUser = result.id;
 
         query = User.find({ user: { $in: admins } });
         result = await query.exec();
-        result.forEach(element => 
+        result.forEach(element =>
             adminUsers.push(element.id)
         );
 
-        query = User.find({ user: { $in: comuns }});
+        query = User.find({ user: { $in: comuns } });
         result = await query.exec();
-        result.forEach(element => 
+        result.forEach(element =>
             comunUsers.push(element.id)
         );
 
@@ -65,6 +63,66 @@ module.exports = app => {
                         err.message || "Não foi possivel criar o Grupo."
                 });
             });
+    }
+
+    controller.updateGroup = async (req, res) => {
+
+        await jwtValidate.verifyJWT(req, res);
+
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
+            return;
+        }
+
+        const admins = req.body.adminUsers;
+        const comuns = req.body.comunUsers;
+        var adminUsers = [];
+        var comunUsers = [];
+        var adminUser;
+
+        var query = User.findOne({ user: req.body.user });
+        var result = await query.exec();
+        adminUser = result.id;
+
+        query = User.find({ user: { $in: admins } });
+        result = await query.exec();
+        result.forEach(element =>
+            adminUsers.push(element.id)
+        );
+
+        query = User.find({ user: { $in: comuns } });
+        result = await query.exec();
+        result.forEach(element =>
+            comunUsers.push(element.id)
+        );
+
+        filter = { 'id': req.body.id };
+        set = {
+            '$set':
+            {
+                'nomeGrupo': req.body.nomeGrupo,
+                'adminUsers': adminUsers,
+                'comunUsers': comunUsers,
+            }
+        };
+
+        Groups.findOneAndUpdate(filter, set);
+    }
+
+    controller.getGroup = async (req, res) => {
+
+    }
+
+    controller.getGroupById = async (req, res) => {
+
+    }
+
+    controller.deleteGroup = async (req, res) => {
+
     }
 
     return controller;

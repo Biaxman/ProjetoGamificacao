@@ -7,6 +7,7 @@ module.exports = app => {
   const controller = {};
 
   controller.createUser = (req, res) => {
+
     if (!req.body) {
       res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
       return;
@@ -40,6 +41,36 @@ module.exports = app => {
       });
   };
 
+  controller.updateUser = async (req, res) => {
+  }
+
+  controller.updateUserPartial = async (req, res) => {
+
+    await jwtValidate.verifyJWT(req, res);
+
+    if (res.statusCode != 200) {
+      return;
+    }
+
+    if (!req.body) {
+      res.status(400).send({ message: "Necessário o envio dos dados de Atualização." });
+      return;
+    }
+  };
+
+  controller.deleteUser = async (req, res) => {
+    await jwtValidate.verifyJWT(req, res);
+
+    if (res.statusCode != 200) {
+      return;
+    }
+
+    if (!req.body) {
+      res.status(400).send({ message: "Necessário o envio dos dados de Atualização." });
+      return;
+    }
+  };
+
   controller.login = (req, res) => {
 
     User.findOne({ user: req.body.user }, function (err, user) {
@@ -62,11 +93,11 @@ module.exports = app => {
           }
         });
       }
-      else{
+      else {
         return res.status(401).send({ message: 'Usuário nãom encontrado.' });
       }
     });
-  }
+  };
 
   return controller;
 }
