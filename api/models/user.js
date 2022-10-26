@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const mongooseGuide = require('mongoose-guid')(mongoose);
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
@@ -11,7 +10,6 @@ var validateEmail = function(email) {
 };
 
 var UserSchema = new Schema({
-    id: { type: mongooseGuide.type, default: mongooseGuide.value },
     user: { type: String, required: true, },
     pwd: { type: String, require: true, },
     email: {

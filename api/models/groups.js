@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
-const mongooseGuide = require('mongoose-guid')(mongoose);
 const Schema = mongoose.Schema;
 
 var GroupSchema = new Schema({
-    id: { type: mongooseGuide.type, default: mongooseGuide.value },
-    user: { type: mongooseGuide.type, required: true, },
+    user: { type: mongoose.ObjectId, required: true, },
     nomeGrupo: { type: String, required: true },
     adminUsers: { type: Array, },
     comunUsers: { type: Array, },

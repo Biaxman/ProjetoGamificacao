@@ -29,18 +29,18 @@ module.exports = app => {
 
         var query = User.findOne({ user: req.body.user });
         var result = await query.exec();
-        adminUser = result.id;
+        adminUser = result._id;
 
         query = User.find({ user: { $in: admins } });
         result = await query.exec();
         result.forEach(element =>
-            adminUsers.push(element.id)
+            adminUsers.push(element._id)
         );
 
         query = User.find({ user: { $in: comuns } });
         result = await query.exec();
         result.forEach(element =>
-            comunUsers.push(element.id)
+            comunUsers.push(element._id)
         );
 
         const group = new Groups({
@@ -86,18 +86,18 @@ module.exports = app => {
 
         var query = User.findOne({ user: req.body.user });
         var result = await query.exec();
-        adminUser = result.id;
+        adminUser = result._id;
 
         query = User.find({ user: { $in: admins } });
         result = await query.exec();
         result.forEach(element =>
-            adminUsers.push(element.id)
+            adminUsers.push(element._id)
         );
 
         query = User.find({ user: { $in: comuns } });
         result = await query.exec();
         result.forEach(element =>
-            comunUsers.push(element.id)
+            comunUsers.push(element._id)
         );
 
         filter = { 'id': req.body.id };
