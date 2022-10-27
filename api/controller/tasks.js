@@ -23,23 +23,21 @@ module.exports = app => {
         var result = await query.exec();
         adminUser = result._id;
 
-        if(adminUser === undefined)
-        {
+        if (adminUser === undefined) {
             res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
             return;
         }
 
-        const group = new Groups({
-            user: adminUser,
-            nomeGrupo: req.body.nomeGrupo,
-            adminUsers: adminUsers,
-            comunUsers: comunUsers,
-            ativo: req.body.ativo,
+        const task = new Tasks({
 
+            userId: adminUser,
+            nomeTask: req.body.name,
+            descricaoTask: req.body.descricao,
+            pontosTask: req.body.pontos,
         });
 
-        group
-            .save(group)
+        task
+            .save(task)
             .then(data => {
                 res.send(data);
             })
@@ -51,8 +49,7 @@ module.exports = app => {
             });
     }
 
-    controller.updateGroup = async (req, res) => {
-
+    controller.getTaskByUser = async (req, res) => {
         await jwtValidate.verifyJWT(req, res);
 
         if (res.statusCode != 200) {
@@ -60,55 +57,68 @@ module.exports = app => {
         }
 
         if (!req.body) {
-            res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
             return;
         }
 
-        const admins = req.body.adminUsers;
-        const comuns = req.body.comunUsers;
-        var adminUsers = [];
-        var comunUsers = [];
-        var adminUser;
+        Task.find({ userId: req.body.userId }, function (err, task) {
+            if (err) throw err;
 
-        var query = User.findOne({ user: req.body.user });
-        var result = await query.exec();
-        adminUser = result._id;
-
-        query = User.find({ user: { $in: admins } });
-        result = await query.exec();
-        result.forEach(element =>
-            adminUsers.push(element._id)
-        );
-
-        query = User.find({ user: { $in: comuns } });
-        result = await query.exec();
-        result.forEach(element =>
-            comunUsers.push(element._id)
-        );
-
-        filter = { 'id': req.body.id };
-        set = {
-            '$set':
-            {
-                'nomeGrupo': req.body.nomeGrupo,
-                'adminUsers': adminUsers,
-                'comunUsers': comunUsers,
+            if (task != undefined) {
+                return res.status(200).send(task);
             }
-        };
-
-        Groups.findOneAndUpdate(filter, set);
+            else {
+                return res.status(401).send({ message: 'Task não encontrado.' });
+            }
+        });
     }
 
-    controller.getGroup = async (req, res) => {
+    controller.getTaskById = async (req, res) => {
+        await jwtValidate.verifyJWT(req, res);
 
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
+            return;
+        }
+
+        Task.findOne({ _id: req.body.id }, function (err, task) {
+            if (err) throw err;
+
+            if (task != undefined) {
+                return res.status(200).send(task);
+            }
+            else {
+                return res.status(401).send({ message: 'Task nãom encontrado.' });
+            }
+        });
     }
 
-    controller.getGroupById = async (req, res) => {
+    controller.deleteTaskById = async (req, res) => {
+        await jwtValidate.verifyJWT(req, res);
 
-    }
+        if (res.statusCode != 200) {
+            return;
+        }
 
-    controller.deleteGroup = async (req, res) => {
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
+            return;
+        }
 
+        Task.findOneAndDelete({ _id: req.body.id }, function (err, task) {
+            if (err) throw err;
+
+            if (task != undefined) {
+                return res.status(200).send('Sucesso.');
+            }
+            else {
+                return res.status(401).send({ message: 'Task não encontrado.' });
+            }
+        });
     }
 
     return controller;

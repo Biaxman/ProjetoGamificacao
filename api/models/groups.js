@@ -6,6 +6,7 @@ var GroupSchema = new Schema({
     nomeGrupo: { type: String, required: true },
     adminUsers: { type: Array, },
     comunUsers: { type: Array, },
+    tasks : { type: Array, },
     ativo: { type: Boolean, default: true, required: true, },
 },
     {
