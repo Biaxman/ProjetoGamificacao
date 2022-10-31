@@ -113,16 +113,135 @@ module.exports = app => {
         Groups.findOneAndUpdate(filter, set);
     }
 
-    controller.getGroup = async (req, res) => {
+    controller.removeTaskFromGroup = async (req, res) => {
 
+        await jwtValidate.verifyJWT(req, res);
+
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados." });
+            return;
+        }
+
+        query = Group.find({ _id: req.body.id });
+        result = await query.exec();
+
+        newsTasks = [];
+        result.tasks.forEach(element => {
+            if (element.id !== req.body.idTaskRemove) {
+                newTasks.push(element)
+            }
+        })
+
+        filter = { 'id': req.body.id };
+        set = {
+            '$set':
+            {
+                'tasks': newTasks,
+            }
+        };
+
+        Groups.findOneAndUpdate(filter, set);
+
+    }
+
+    controller.getGroupByAdmin = async (req, res) => {
+        await jwtValidate.verifyJWT(req, res);
+
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
+            return;
+        }
+        userId = req.body.idUser;
+        Group.find({ admins: userId }, function(err, result){
+            if (err) throw err;
+
+            if (result != undefined) {
+                return res.status(200).send(result);
+            }
+            else {
+                return res.status(401).send({ message: 'Grupo não encontrado.' });
+            }
+        });
+    }
+
+    controller.getGroupByComun = async (req, res) => {
+        await jwtValidate.verifyJWT(req, res);
+
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
+            return;
+        }
+        userId = req.body.idUser;
+        Group.find({ comuns: userId }, function(err, result){
+            if (err) throw err;
+
+            if (result != undefined) {
+                return res.status(200).send(result);
+            }
+            else {
+                return res.status(401).send({ message: 'Grupo não encontrado.' });
+            }
+        });
     }
 
     controller.getGroupById = async (req, res) => {
+        await jwtValidate.verifyJWT(req, res);
 
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados para busca." });
+            return;
+        }
+
+        Group.find({ _id: req.body.id }, function(err, result){
+            if (err) throw err;
+
+            if (result != undefined) {
+                return res.status(200).send(result);
+            }
+            else {
+                return res.status(401).send({ message: 'Grupo não encontrado.' });
+            }
+        });
     }
 
     controller.deleteGroup = async (req, res) => {
+        
+        await jwtValidate.verifyJWT(req, res);
 
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        if (!req.body) {
+            res.status(400).send({ message: "Necessário o envio dos dados de cadastro." });
+            return;
+        }
+
+        filter = { 'id': req.body.id };
+        set = {
+            '$set':
+            {
+                'ativo': false,
+            }
+        };
+
+        Groups.findOneAndUpdate(filter, set);
     }
 
     return controller;
